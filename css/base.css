@@ -1,0 +1,168 @@
+/* ==========================================================================
+   SistemaDeNutricao — css/base.css
+
+   Fundação visual global:
+     • variáveis da paleta "Verde Clínico"
+     • box sizing
+     • base de html/body
+     • tipografia dos elementos de texto e de formulário
+     • foco visível
+
+   O QUE NÃO PERTENCE A ESTE ARQUIVO (fica para as próximas etapas):
+     layout.css      → cabeçalho, rodapé, formulário, área de resultados,
+                       grades e responsividade
+     componentes.css → campos, botões, cartões, mensagens, seções
+     impressao.css   → regras de impressão (esconder .nao-imprimir)
+
+   Sem frameworks, sem bibliotecas externas e sem fontes baixadas da internet.
+   A tipografia usa a fonte que já existe no aparelho do usuário.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. VARIÁVEIS
+   ==========================================================================
+   Paleta definida no planejamento (seção 9 — "Verde Clínico").
+   Os valores fora dessa seção foram escolhidos para completar a interface
+   e estão verificados por contraste (WCAG).
+   ========================================================================== */
+
+:root {
+  /* --- Marca --- */
+  --cor-primaria: #146C4C;          /* cabeçalho, botões principais, títulos */
+  --cor-primaria-escura: #105C41;   /* estado hover/pressionado da cor primária */
+
+  /* A secundária é clara demais para texto pequeno (contraste 3,35).
+     Usar em ícones, gráficos, bordas de ênfase e fundos — nunca como cor
+     de texto pequeno sobre o fundo claro. */
+  --cor-secundaria: #2E9E77;
+
+  /* --- Superfícies --- */
+  --cor-fundo: #F7FAF8;       /* fundo geral da página */
+  --cor-superficie: #FFFFFF;  /* cartões, campos e blocos sobre o fundo */
+  --cor-borda: #B7CEC5;       /* contorno visível, porém discreto */
+
+  /* --- Texto --- */
+  --cor-texto: #16241F;             /* contraste 16,08 sobre a superfície */
+  --cor-texto-secundario: #5B6B65;  /* contraste 5,62 — legendas e unidades */
+
+  /* --- Retorno de interface ---
+     Servem para MENSAGENS e estados de campo (erro de preenchimento, aviso).
+     NÃO são para classificar resultados: o material de referência não define
+     faixas para o IMC nem ponto de corte para o RCE, então nenhum resultado
+     recebe cor de alerta (planejamento, seções 5.3 e 9).
+     Ambos com contraste AA sobre o fundo e sobre a superfície. */
+  --cor-erro: #B3261E;
+  --cor-alerta: #A65F0F;
+
+  /* --- Foco --- */
+  --cor-foco: var(--cor-primaria);
+  --largura-foco: 2px;
+
+  /* --- Tipografia --- */
+  --fonte-sistema:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+/* ==========================================================================
+   2. BOX SIZING
+   ==========================================================================
+   Largura e altura passam a incluir borda e preenchimento, evitando que um
+   campo "estoure" a largura do seu contêiner.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   3. HTML E BODY
+   ========================================================================== */
+
+html {
+  height: 100%;
+  /* Evita que o iOS aumente a fonte sozinho ao girar o aparelho. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-sistema);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   4. ELEMENTOS DE TEXTO
+   ==========================================================================
+   Apenas tipografia e herança de fonte. Espaçamentos entre blocos, larguras
+   e alinhamentos pertencem ao layout.
+   ========================================================================== */
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.375rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+p {
+  margin: 0;
+}
+
+/* Controles de formulário não herdam a fonte por padrão: sem esta regra,
+   usaríamos a fonte do navegador em vez da fonte do sistema. */
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+/* ==========================================================================
+   5. FOCO E ACESSIBILIDADE
+   ==========================================================================
+   Estado de foco visível e consistente para quem navega por teclado.
+   O outline padrão não é removido: apenas recebe uma cor e um afastamento
+   que combinam com a paleta.
+   ========================================================================== */
+
+:focus-visible {
+  outline: var(--largura-foco) solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+/* O recolhimento de itens pela lógica da aplicação usa o atributo `hidden`
+   (V2, V3, V5, V7 em js/telas/calculadora.js). Sem esta regra, um `display`
+   definido em componentes.css teria precedência sobre o atributo e itens
+   que deveriam estar ocultos voltariam a aparecer. */
+[hidden] {
+  display: none !important;
+}

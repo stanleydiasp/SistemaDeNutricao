@@ -1,0 +1,426 @@
+/* ==========================================================================
+   SistemaDeNutricao — css/componentes.css
+
+   APARÊNCIA dos componentes:
+     • cinco seções do formulário
+     • rótulos, controles, unidades, ajuda e estados
+     • botões (principal, secundários e de menor destaque)
+     • quatro categorias de resultados e suas linhas
+     • área de mensagens
+
+   O QUE NÃO PERTENCE A ESTE ARQUIVO:
+     base.css      → variáveis, tipografia e foco
+     layout.css    → largura máxima, colunas, responsividade e espaçamentos
+     impressao.css → regras de impressão (etapa própria)
+
+   Todas as cores vêm das variáveis do base.css. Nenhuma cor nova é
+   definida aqui e a paleta não é redefinida.
+
+   Sobre a identidade "Verde Clínico": fundos claros, bordas discretas e
+   hierarquia por tipografia e espaçamento. Sem gradientes, sem sombras
+   fortes e sem decoração — apenas o suficiente para separar e destacar.
+
+   Onde um estado precisa ser percebido sem depender de cor, há um segundo
+   sinal: espessura de borda, mudança de fundo, cursor ou o próprio atributo
+   `disabled` (que os leitores de tela anunciam).
+   ========================================================================== */
+
+/* ==========================================================================
+   1. SEÇÕES DO FORMULÁRIO
+   ==========================================================================
+   Cada <fieldset class="secao"> vira um cartão claro sobre o fundo da página.
+   O layout interno (colunas) continua sendo definido no layout.css.
+   ========================================================================== */
+
+.secao {
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.5rem;
+}
+
+/* O <legend> tem renderização própria em cada navegador e não se comporta
+   como um item de Grid comum, por isso NÃO recebe fundo colorido nem borda:
+   eles cobririam apenas o tamanho do texto, não a largura da seção.
+   A hierarquia vem da tipografia e da cor. */
+.secao__titulo {
+  color: var(--cor-primaria);
+}
+
+/* ==========================================================================
+   2. CAMPOS E CONTROLES
+   ========================================================================== */
+
+/* --- Rótulo --------------------------------------------------------------- */
+
+.campo__rotulo {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* Marcação "(opcional)" — em peso e cor menores, para não competir
+   com o nome do campo. */
+.campo__opcional {
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* --- Controle (input e select) -------------------------------------------- */
+
+.campo__controle {
+  width: 100%;
+  min-height: 2.75rem;   /* 44px: alvo de toque confortável */
+  padding: 0.5rem 0.75rem;
+
+  background-color: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+
+  transition: border-color 120ms ease;
+}
+
+/* Controles dentro da linha com unidade (ex.: peso + "kg") dividem o espaço. */
+.campo__entrada .campo__controle {
+  width: auto;
+}
+
+/* O foco usa duas coisas ao mesmo tempo:
+     • a borda muda para a cor primária (reforço visual)
+     • o contorno definido no base.css (:focus-visible) continua valendo
+   O contorno NÃO é removido — é o indicador que funciona para quem navega
+   por teclado, inclusive em navegadores que não aplicam `border-color`
+   em `:focus-visible`. */
+.campo__controle:hover:not(:disabled) {
+  border-color: var(--cor-secundaria);
+}
+
+.campo__controle:focus {
+  border-color: var(--cor-primaria);
+  outline-color: var(--cor-primaria);
+}
+
+/* --- Campo desabilitado ---------------------------------------------------
+   Recebe sinal duplo: fundo acinzentado E borda mais clara. O atributo
+   `disabled` também é anunciado por leitores de tela. */
+
+.campo__controle:disabled {
+  background-color: #EDF2F0;
+  border-color: #D8E3DE;
+  color: var(--cor-texto-secundario);
+  cursor: not-allowed;
+}
+
+/* Quando o campo condicional está desabilitado, o rótulo também fica
+   discreto — deixa claro que o campo não está em uso no momento.
+   Onde `:has()` não existir, o campo desabilitado continua indicando o
+   estado sozinho (comportamento degradado com segurança). */
+.campo--condicional:has(.campo__controle:disabled) .campo__rotulo {
+  color: var(--cor-texto-secundario);
+  font-weight: 400;
+}
+
+/* --- Unidades -------------------------------------------------------------- */
+
+.campo__unidade {
+  font-size: 0.875rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* A unidade "cm" da altura é destacada porque o campo aceita centímetros
+   e não metros: um erro de unidade passaria despercebido (decisão 37).
+   Esta é a única proteção adotada — não há validação numérica. */
+.campo__unidade--destaque {
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+/* --- Texto de ajuda -------------------------------------------------------- */
+
+.campo__ajuda {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--cor-texto-secundario);
+}
+
+/* ==========================================================================
+   3. BOTÕES
+   ==========================================================================
+   Hierarquia:
+     .botao--principal        → Calcular         (destaque máximo)
+     .botao                   → Imprimir, Copiar (secundário: contorno)
+     #botao-limpar            → Limpar           (menor destaque: discreto)
+
+   A cor primária é escura o bastante para levar texto branco com contraste
+   6,4 (AA). O contorno dos secundários usa a mesma cor para o texto,
+   garantindo legibilidade.
+   ========================================================================== */
+
+.botao {
+  min-height: 2.75rem;          /* 44px: alvo de toque confortável */
+  padding: 0.5rem 1rem;
+
+  background-color: var(--cor-superficie);
+  color: var(--cor-primaria);
+  border: 1px solid var(--cor-primaria);
+  border-radius: 0.375rem;
+
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  /* O rótulo não deve criar rolagem horizontal em telas estreitas. */
+  max-width: 100%;
+
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.botao:hover:not(:disabled) {
+  background-color: #EAF3EF;
+  border-color: var(--cor-primaria-escura);
+  color: var(--cor-primaria-escura);
+}
+
+/* Estado pressionado: fundo mais fechado, para dar retorno do clique. */
+.botao:active:not(:disabled) {
+  background-color: #DCEBE5;
+  border-color: var(--cor-primaria-escura);
+}
+
+/* O contorno de foco do base.css é mantido; aqui apenas garantimos que ele
+   use a cor primária mesmo sobre um fundo claro. */
+.botao:focus-visible {
+  outline-color: var(--cor-primaria);
+}
+
+/* --- Ação principal -------------------------------------------------------- */
+
+.botao--principal {
+  background-color: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.botao--principal:hover:not(:disabled) {
+  background-color: var(--cor-primaria-escura);
+  border-color: var(--cor-primaria-escura);
+  color: #FFFFFF;
+}
+
+.botao--principal:active:not(:disabled) {
+  background-color: #0C4A34;
+  border-color: #0C4A34;
+}
+
+/* O contorno de foco sobre o fundo escuro precisa de um anel claro para
+   continuar visível. */
+.botao--principal:focus-visible {
+  outline-color: var(--cor-primaria-escura);
+}
+
+/* --- Limpar: menor destaque ------------------------------------------------
+   Os três botões de resultado usam apenas `class="botao"` no HTML. Para
+   diferenciar "Limpar" sem alterar a estrutura da página, usamos o `id`
+   que já existe. Sem contorno colorido e com texto secundário, ele deixa
+   de competir com as outras duas ações. */
+
+#botao-limpar {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--cor-texto-secundario);
+}
+
+#botao-limpar:hover:not(:disabled) {
+  background-color: #EDF2F0;
+  border-color: var(--cor-borda);
+  color: var(--cor-texto);
+}
+
+#botao-limpar:active:not(:disabled) {
+  background-color: #E2EAE7;
+}
+
+/* --- Desabilitado ---------------------------------------------------------- */
+
+.botao:disabled {
+  background-color: #EDF2F0;
+  border-color: #D8E3DE;
+  color: var(--cor-texto-secundario);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   4. ÁREA DE RESULTADOS
+   ========================================================================== */
+
+/* Título geral da área: mais forte que os títulos das categorias, para
+   deixar clara a hierarquia. */
+.resultados__titulo {
+  color: var(--cor-texto);
+}
+
+.categoria {
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.categoria__titulo {
+  color: var(--cor-primaria);
+  font-size: 1rem;
+}
+
+/* --- Cada linha de resultado ----------------------------------------------
+   A distribuição horizontal (rótulo à esquerda, valor à direita) vem do
+   layout.css. Aqui cuidamos da legibilidade e do destaque. */
+
+.resultado__rotulo {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+/* O valor é o que o usuário veio buscar: recebe mais peso visual.
+   `tabular-nums` alinha os números entre linhas, o que ajuda a comparar
+   valores rapidamente. */
+.resultado__valor {
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+/* Segunda medida da mesma linha (ex.: as kcal de um macronutriente).
+   Fica menor e em cor secundária para não competir com o valor principal. */
+.resultado__secundario {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-texto-secundario);
+}
+
+.resultado__unidade {
+  font-size: 0.8125rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* Observação complementar (usada pela conferência da soma, V4). */
+.resultado__observacao {
+  font-size: 0.8125rem;
+  color: var(--cor-erro);
+}
+
+/* --- Linhas secundárias ----------------------------------------------------
+   Percentuais são um detalhe derivado dos macronutrientes, e a conferência
+   é apenas uma verificação interna. Ambas recebem peso menor. */
+
+.resultado--percentual .resultado__rotulo,
+.resultado--percentual .resultado__valor {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.resultado--conferencia {
+  color: var(--cor-texto-secundario);
+}
+
+.resultado--conferencia .resultado__valor {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   5. MENSAGENS
+   ==========================================================================
+   Duas situações diferentes, com cores diferentes:
+
+     #lista-mensagens  → ERRO de preenchimento (V1, V5, V6, V7)
+                         o usuário precisa corrigir um campo
+                         → cor de erro (vermelho)
+
+     .categoria__mensagem → LIMITAÇÃO da combinação escolhida (V2, V3)
+                         os dados estão preenchidos; os parâmetros é que
+                         não permitem calcular os macronutrientes
+                         → cor de alerta (âmbar)
+
+   A distinção ajuda a entender o que fazer: uma pede correção de campo,
+   a outra pede revisão de parâmetros.
+
+   O atributo `hidden` continua controlando a exibição — nada aqui interfere
+   nisso, e a regra `[hidden]` do base.css segue valendo.
+   ========================================================================== */
+
+.mensagens {
+  background-color: #FDF2F1;
+  border: 1px solid #F0C9C6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.mensagens__titulo {
+  color: var(--cor-erro);
+  font-size: 1rem;
+}
+
+.mensagens__lista {
+  color: var(--cor-erro);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+/* --- Mensagem dentro da categoria Macronutrientes --------------------------
+   Este elemento fica VAZIO quando a validação passa. Sem a regra `:empty`
+   abaixo, o preenchimento e o fundo criariam uma faixa âmbar vazia no meio
+   dos resultados. */
+
+.categoria__mensagem {
+  color: var(--cor-alerta);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.categoria__mensagem:not(:empty) {
+  background-color: #FDF6EC;
+  border: 1px solid #EBD3AF;
+  border-radius: 0.375rem;
+  padding: 0.625rem 0.75rem;
+}
+
+/* A mesma situação acontece com a observação da conferência (V4): vazia
+   quando a soma está correta. */
+.resultado__observacao:empty {
+  display: none;
+}
+
+/* ==========================================================================
+   6. CABEÇALHO E RODAPÉ
+   ==========================================================================
+   A estrutura e os espaçamentos vêm do layout.css. Aqui apenas cor.
+   ========================================================================== */
+
+.cabecalho__titulo {
+  color: var(--cor-primaria);
+}
+
+.rodape__nota {
+  font-size: 0.8125rem;
+}
+
+/* ==========================================================================
+   VARIÁVEIS REMOVIDAS — por que não existe cor de "sucesso" nem de destaque
+   ==========================================================================
+   `--cor-sucesso` e `--cor-destaque` existiam no base.css como reserva e não
+   tinham nenhum uso. Foram removidas (decisão 47) para o projeto não manter
+   cor sem significado.
+
+   O motivo de fundo continua valendo: a interface ainda não tem estado
+   positivo ou negativo para marcar, porque o material de referência não
+   define faixas para o IMC nem ponto de corte para o RCE — nenhum resultado é
+   classificado (planejamento, seções 5.3 e 9).
+
+   Se um caso de uso real aparecer, a cor deve voltar ao base.css junto com a
+   regra que a usa. Para texto de alerta existe `--cor-alerta`, com contraste
+   suficiente.
+   ========================================================================== */
